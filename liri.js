@@ -16,7 +16,7 @@ switch(input){
 	/* Print latest 20 tweets */
 
 	case "my-tweets":{
-
+		
 		var params = {screen_name: 'hot_poppers',
 					  count:       20            };
 
@@ -38,19 +38,53 @@ switch(input){
 
 	/* Show information about a song */
 
-	case "spoitify-this-song":{
-		console.log("DO A SONG");
+	case "spotify-this-song":{
+		
 		let song;
 
 		if(process.argv[3])
 			song = process.argv[3];
 		else
-			song = `"The Sign" by Ace of Base`;
+			song = `The Sign`;
 
-		// Artist(s)
-		// Song's name
-		// Preview link
-		// Album song is from
+		spotify.search({ type: 'track,artist', query: song }, function(err, data) {
+
+		  if (err) {
+		    return console.log('Error occurred: ' + err);
+		  }
+
+		  let found = false;
+		 
+		  if(song == `The Sign`)
+			  data.tracks.items.forEach(p =>{
+			  	if(p.artists[0].name === "Ace of Base" && !found){ 
+				  	console.log(`Track:   ${p.name}`);
+				  	console.log(`Artists: ${p.artists[0].name}`); 
+				    console.log(`Albums:  ${p.album.name}`); 
+		 			console.log(`Preview: ${p.preview_url}`); 
+			  		found = true;
+			  	}
+			  });
+
+		  else{
+
+		  	let artists = "";
+		  	for(let i = 0 ; i < data.tracks.items[0].artists.length; ++i){
+		  		artists += data.tracks.items[0].artists[i].name;
+		  		if(i !== data.tracks.items[0].artists.length - 1)
+		  			artists+=", ";
+		  	}
+
+		  	console.log(`Track:   ${data.tracks.items[0].name}`);
+		  	console.log(`Artists: ${artists}`); 
+		    console.log(`Albums:  ${data.tracks.items[0].album.name}`); 
+ 			console.log(`Preview: ${data.tracks.items[0].preview_url}`); 
+		    	
+		  }
+
+
+
+		});
 
 		break;
 	}
