@@ -9,7 +9,19 @@ const client  = new Twitter(keys.twitter);
 
 let input     = process.argv[2];
 
-function writeLog(act,input){
+function logAndLog(txt){
+
+	console.log(txt);
+	addToLog(`${txt}, `)
+
+}
+
+function addToLog(txt){
+
+	fs.appendFile("./log.txt",txt,function(err){
+		if(err)
+			console.log("errer");
+	});
 
 }
 
@@ -28,11 +40,11 @@ function processInput(inp,inp2){
 
 			  if (!error) {
 
-			    tweets.forEach(p => console.log(`@${p.user.screen_name}: ${p.text}`));
+			    tweets.forEach(p => logAndLog(`@${p.user.screen_name}: ${p.text}`));
 
 			  } else {
 
-			  	console.log(error);
+			  	logAndLog(error);
 
 			  }
 
@@ -50,7 +62,10 @@ function processInput(inp,inp2){
 				song = inp2;
 
 			else if(process.argv[3])
+			{
 				song = process.argv[3];
+				addToLog(`${song}, `)
+			}
 
 			else
 				song = `The Sign`;
@@ -66,10 +81,10 @@ function processInput(inp,inp2){
 			  if(song == `The Sign`)
 				  data.tracks.items.forEach(p =>{
 				  	if(p.artists[0].name === "Ace of Base" && !found){ 
-					  	console.log(`Track:   ${p.name}`);
-					  	console.log(`Artists: ${p.artists[0].name}`); 
-					    console.log(`Albums:  ${p.album.name}`); 
-			 			console.log(`Preview: ${p.preview_url}`); 
+					  	logAndLog(`Track:   ${p.name}`);
+					  	logAndLog(`Artists: ${p.artists[0].name}`); 
+					    logAndLog(`Albums:  ${p.album.name}`); 
+			 			logAndLog(`Preview: ${p.preview_url}`); 
 				  		found = true;
 				  	}
 				  });
@@ -83,10 +98,10 @@ function processInput(inp,inp2){
 			  			artists+=", ";
 			  	}
 
-			  	console.log(`Track:   ${data.tracks.items[0].name}`);
-			  	console.log(`Artists: ${artists}`); 
-			    console.log(`Albums:  ${data.tracks.items[0].album.name}`); 
-	 			console.log(`Preview: ${data.tracks.items[0].preview_url}`); 
+			  	logAndLog(`Track:   ${data.tracks.items[0].name}`);
+			  	logAndLog(`Artists: ${artists}`); 
+			    logAndLog(`Albums:  ${data.tracks.items[0].album.name}`); 
+	 			logAndLog(`Preview: ${data.tracks.items[0].preview_url}`); 
 			    	
 			  }
 
@@ -118,10 +133,12 @@ function processInput(inp,inp2){
 		}
 	}
 
- }
+}
+
+addToLog(`${input}, `);
 
 if(input === "do-what-it-says"){
-	console.log("liri is listening");
+
 	fs.readFile("random.txt","utf8",function(error,data){
 		if(error)
 			return console.log("error");
