@@ -116,16 +116,38 @@ function processInput(inp,inp2){
 
 		case "movie-this":{
 
-			/* * Title of the movie.
-	           * Year the movie came out.
-	           * IMDB Rating of the movie.
-	           * Rotten Tomatoes Rating of the movie.
-	           * Country where the movie was produced.
-	           * Language of the movie.
-	           * Plot of the movie.
-	           * Actors in the movie.*/
+	        let title;
 
-	           break;
+	        if(inp2)
+	        	title = inp2;
+	        else if(process.argv[3]){
+	        	title = process.argv[3];
+	        	addToLog(`${title}, `);
+	        }
+	        else 
+	        	title = "Mr. Nobody";
+
+	        request(`http://www.omdbapi.com/?t=${title}&y=&plot=short&apikey=trilogy`, function(e, r, b) {
+
+			  // If the request is successful (i.e. if the response status code is 200)
+			  if (!e && r.statusCode === 200) {
+
+			   let data = JSON.parse(b);
+
+			   logAndLog(`Title: ${data.Title}`);
+			   logAndLog(`Year: ${data.Year}`);
+			   data.Ratings.forEach(p =>{
+			   	  if(p.Source === `Internet Movie Database` || p.Source === `Rotten Tomatoes`)
+			   	  	logAndLog(`${p.Source} Rating: ${p.Value}`);
+			   });
+			   logAndLog(`Contry: ${data.Country}`);
+			   logAndLog(`Language: ${data.Language}`);
+			   logAndLog(`Plot: ${data.Plot}`);
+			   logAndLog(`Actors: ${data.Actors}`);
+			  }
+
+			});
+	        break;
 		}
 
 		default: {
