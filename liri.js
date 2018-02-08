@@ -2,6 +2,8 @@ const env     = require("dotenv").config();
 const keys    = require("./keys.js");
 const Spotify = require("node-spotify-api");
 const Twitter = require("twitter");
+const request = require("request");
+const fs      = require("fs");
 const spotify = new Spotify(keys.spotify);
 const client  = new Twitter(keys.twitter);
 
@@ -11,107 +13,124 @@ function writeLog(act,input){
 
 }
 
-switch(input){
+function processInput(inp,inp2){
 
-	/* Print latest 20 tweets */
+	switch(inp){
 
-	case "my-tweets":{
-		
-		var params = {screen_name: 'hot_poppers',
-					  count:       20            };
+		/* Print latest 20 tweets */
 
-		client.get('statuses/user_timeline', params, function(error, tweets, response) {
+		case "my-tweets":{
+			
+			var params = {screen_name: 'hot_poppers',
+						  count:       20            };
 
-		  if (!error) {
+			client.get('statuses/user_timeline', params, function(error, tweets, response) {
 
-		    tweets.forEach(p => console.log(`@${p.user.screen_name}: ${p.text}`));
+			  if (!error) {
 
-		  } else {
+			    tweets.forEach(p => console.log(`@${p.user.screen_name}: ${p.text}`));
 
-		  	console.log(error);
+			  } else {
 
-		  }
+			  	console.log(error);
 
-		});
-		break;
-	}
+			  }
 
-	/* Show information about a song */
+			});
+			break;
+		}
 
-	case "spotify-this-song":{
-		
-		let song;
+		/* Show information about a song */
 
-		if(process.argv[3])
-			song = process.argv[3];
-		else
-			song = `The Sign`;
+		case "spotify-this-song":{
+			
+			let song;
 
-		spotify.search({ type: 'track,artist', query: song }, function(err, data) {
+			if(inp2)
+				song = inp2;
 
-		  if (err) {
-		    return console.log('Error occurred: ' + err);
-		  }
+			else if(process.argv[3])
+				song = process.argv[3];
 
-		  let found = false;
-		 
-		  if(song == `The Sign`)
-			  data.tracks.items.forEach(p =>{
-			  	if(p.artists[0].name === "Ace of Base" && !found){ 
-				  	console.log(`Track:   ${p.name}`);
-				  	console.log(`Artists: ${p.artists[0].name}`); 
-				    console.log(`Albums:  ${p.album.name}`); 
-		 			console.log(`Preview: ${p.preview_url}`); 
-			  		found = true;
+			else
+				song = `The Sign`;
+
+			spotify.search({ type: 'track,artist', query: song }, function(err, data) {
+
+			  if (err) {
+			    return console.log('Error occurred: ' + err);
+			  }
+
+			  let found = false;
+			 
+			  if(song == `The Sign`)
+				  data.tracks.items.forEach(p =>{
+				  	if(p.artists[0].name === "Ace of Base" && !found){ 
+					  	console.log(`Track:   ${p.name}`);
+					  	console.log(`Artists: ${p.artists[0].name}`); 
+					    console.log(`Albums:  ${p.album.name}`); 
+			 			console.log(`Preview: ${p.preview_url}`); 
+				  		found = true;
+				  	}
+				  });
+
+			  else{
+
+			  	let artists = "";
+			  	for(let i = 0 ; i < data.tracks.items[0].artists.length; ++i){
+			  		artists += data.tracks.items[0].artists[i].name;
+			  		if(i !== data.tracks.items[0].artists.length - 1)
+			  			artists+=", ";
 			  	}
-			  });
 
-		  else{
-
-		  	let artists = "";
-		  	for(let i = 0 ; i < data.tracks.items[0].artists.length; ++i){
-		  		artists += data.tracks.items[0].artists[i].name;
-		  		if(i !== data.tracks.items[0].artists.length - 1)
-		  			artists+=", ";
-		  	}
-
-		  	console.log(`Track:   ${data.tracks.items[0].name}`);
-		  	console.log(`Artists: ${artists}`); 
-		    console.log(`Albums:  ${data.tracks.items[0].album.name}`); 
- 			console.log(`Preview: ${data.tracks.items[0].preview_url}`); 
-		    	
-		  }
+			  	console.log(`Track:   ${data.tracks.items[0].name}`);
+			  	console.log(`Artists: ${artists}`); 
+			    console.log(`Albums:  ${data.tracks.items[0].album.name}`); 
+	 			console.log(`Preview: ${data.tracks.items[0].preview_url}`); 
+			    	
+			  }
 
 
 
-		});
+			});
 
-		break;
+			break;
+		}
+
+		/* Movie info */
+
+		case "movie-this":{
+
+			/* * Title of the movie.
+	           * Year the movie came out.
+	           * IMDB Rating of the movie.
+	           * Rotten Tomatoes Rating of the movie.
+	           * Country where the movie was produced.
+	           * Language of the movie.
+	           * Plot of the movie.
+	           * Actors in the movie.*/
+
+	           break;
+		}
+
+		default: {
+			console.log("I'm sorry Dave, I'm afraind I can't do that.");
+		}
 	}
 
-	/* Movie info */
+ }
 
-	case "movie-this":{
+if(input === "do-what-it-says"){
+	console.log("liri is listening");
+	fs.readFile("random.txt","utf8",function(error,data){
+		if(error)
+			return console.log("error");
 
-		/* * Title of the movie.
-           * Year the movie came out.
-           * IMDB Rating of the movie.
-           * Rotten Tomatoes Rating of the movie.
-           * Country where the movie was produced.
-           * Language of the movie.
-           * Plot of the movie.
-           * Actors in the movie.*/
+		let splitData = data.split(",");
+		processInput(splitData[0],splitData[1]);
 
-           break;
-	}
+	});
 
-	/* Do things from random txt */
-
-	case "do-what-it-says":{
-
-	}
-
-	default: {
-		console.log("Hot Poppers!");
-	}
+} else {
+	processInput(input);
 }
