@@ -68,7 +68,7 @@ function processInput(inp,inp2){
 			}
 
 			else
-				song = `The Sign`;
+				song = `I Hate the Weekend`;
 
 			spotify.search({ type: 'track,artist', query: song }, function(err, data) {
 
@@ -77,19 +77,6 @@ function processInput(inp,inp2){
 			  }
 
 			  let found = false;
-			 
-			  if(song == `The Sign`)
-				  data.tracks.items.forEach(p =>{
-				  	if(p.artists[0].name === "Ace of Base" && !found){ 
-					  	logAndLog(`Track:   ${p.name}`);
-					  	logAndLog(`Artists: ${p.artists[0].name}`); 
-					    logAndLog(`Albums:  ${p.album.name}`); 
-			 			logAndLog(`Preview: ${p.preview_url}`); 
-				  		found = true;
-				  	}
-				  });
-
-			  else{
 
 			  	let artists = "";
 			  	for(let i = 0 ; i < data.tracks.items[0].artists.length; ++i){
@@ -102,10 +89,7 @@ function processInput(inp,inp2){
 			  	logAndLog(`Artists: ${artists}`); 
 			    logAndLog(`Albums:  ${data.tracks.items[0].album.name}`); 
 	 			logAndLog(`Preview: ${data.tracks.items[0].preview_url}`); 
-			    	
-			  }
-
-
+			
 
 			});
 
