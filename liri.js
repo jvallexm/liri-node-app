@@ -87,7 +87,7 @@ function processInput(inp,inp2){
 
 			  	logAndLog(`Track:   ${data.tracks.items[0].name}`);
 			  	logAndLog(`Artists: ${artists}`); 
-			    logAndLog(`Albums:  ${data.tracks.items[0].album.name}`); 
+			    logAndLog(`Album:   ${data.tracks.items[0].album.name}`); 
 	 			logAndLog(`Preview: ${data.tracks.items[0].preview_url}`); 
 			
 
