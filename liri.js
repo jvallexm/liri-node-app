@@ -40,7 +40,7 @@ function processInput(inp,inp2){
 
 			  if (!error) {
 
-			    tweets.forEach(p => logAndLog(`@${p.user.screen_name}: ${p.text}`));
+			    tweets.forEach(p => logAndLog(`@${p.user.screen_name}: ${p.text} @ ${p.created_at}`));
 
 			  } else {
 
