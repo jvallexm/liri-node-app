@@ -20,7 +20,7 @@ function addToLog(txt){
 
 	fs.appendFile("./log.txt",txt,function(err){
 		if(err)
-			console.log("errer");
+			console.log(err);
 	});
 
 }
@@ -135,7 +135,7 @@ function processInput(inp,inp2){
 		}
 
 		default: {
-			console.log("I'm sorry Dave, I'm afraind I can't do that.");
+			console.log("I'm sorry Dave, I'm afraid I can't do that.");
 		}
 	}
 
